@@ -1,0 +1,61 @@
+name: Run Postman Tests with Newman
+
+on:
+  push:
+    branches:
+      - main  
+
+permissions:  
+  contents: read   
+  pages: write    
+  id-token: write  
+
+jobs:
+  postman-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18 
+
+      - name: Install Newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      - name: Make directory for results
+        run: mkdir -p testResults 
+
+      - name: Run Postman Collection
+        run: |
+          newman run tests/petstore.collection.json -r htmlextra \
+          --reporter-htmlextra-export testResults/htmlreport.html \
+          --reporter-htmlextra-darkTheme
+
+      - name: Upload Test Results as Artifacts (For Debugging)  
+        uses: actions/upload-artifact@v4
+        with:
+          name: RunReports
+          path: testResults
+
+      - name: Upload Report for GitHub Pages
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: testResults 
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v3
+        with:
+          enablement: true
+
+      - name: Deploy Report to GitHub Pages
+        uses: actions/deploy-pages@v2
+
+      - name: Clean Actions Cache
+        run: |
+          rm -rf ~/.actions  
