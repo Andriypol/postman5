@@ -29,14 +29,27 @@ jobs:
 
       - name: Make directory for results
         run: | 
-          mkdir -p docs 
+          mkdir -p testResults 
 
       - name: Run Postman Collection
         run: |
-          npx newman run tests/petstore_collection.json -r htmlextra --reporter-htmlextra-export docs/htmlreport.html --reporter-htmlextra-darkTheme  || true
+          newman run tests/petstore_collection.json -r htmlextra --reporter-htmlextra-export testResults/index.html --reporter-htmlextra-darkTheme  || true
 
       - name: Upload Test Results as Artifacts (For Debugging)  
         uses: actions/upload-artifact@v4
         with:
           name: RunReports
           path: docs
+
+      - name: Upload Report for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: testResults 
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Deploy Report to GitHub Pages
+        uses: actions/deploy-pages@v4 
