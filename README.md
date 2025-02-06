@@ -1,4 +1,4 @@
-# Cypress Docker Test Automation Project
+# REST API Postman Project
 
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white)
 
