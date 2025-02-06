@@ -33,7 +33,7 @@ jobs:
 
       - name: Run Postman Collection
         run: |
-          newman run Demo-My.postman_collection.json -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
+          newman run tests/petstore.collection.json -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
 
       - name: Upload Test Results as Artifacts (For Debugging)  
         uses: actions/upload-artifact@v4
