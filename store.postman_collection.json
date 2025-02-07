@@ -1,0 +1,983 @@
+{
+	"info": {
+		"_postman_id": "6f86c474-a1c0-40a7-ad46-27e9b3ddc1c3",
+		"name": "store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40065339"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "List products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Pagination returns correct number of results\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.length).to.eql(3); // \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get product by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let expectedSchema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"number\"\r",
+									"    },\r",
+									"    \"name\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"price\": {\r",
+									"      \"type\": \"number\"\r",
+									"    },\r",
+									"    \"sku\": {\r",
+									"      \"type\": \"number\"\r",
+									"    },\r",
+									"    \"description\": {\r",
+									"      \"type\": \"string\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"name\",\r",
+									"    \"price\",\r",
+									"    \"sku\",\r",
+									"    \"description\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Response follows JSON schema\", function () {\r",
+									"    pm.response.to.have.jsonSchema(expectedSchema);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/4",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"product_id\", jsonData.id);\r",
+									"pm.environment.set(\"product_name\", jsonData.name);\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"platanoo\",\r\n    \"price\": 30,\r\n    \"sku\": 9999213124233145,\r\n    \"description\": \"awesome\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get newly created product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let prodName = pm.environment.get(\"product_name\");\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.test(\"Assert name of the product\", function () {\r",
+									"    pm.expect(jsonData.name).to.eql(prodName);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/{{product_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"edited_product_name\", jsonData.name);\r",
+									"\r",
+									"pm.test(\"Check edited name of the product\", function () {\r",
+									"    pm.expect(jsonData.name).to.eql(\"platanoEDITED\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{product_id}},\r\n    \"name\": \"platanoEDITED\",\r\n    \"price\": 155,\r\n    \"sku\": 12332112113,\r\n    \"description\": \"changed description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove product by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"deletedProductId\", jsonData.id);\r",
+									"let prodName = pm.environment.get(\"edited_product_name\");\r",
+									"\r",
+									"pm.test(\"Assert name of the deleted product\", function () {\r",
+									"    pm.expect(jsonData.name).to.eql(prodName);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/{{product_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check deleted item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"let itemId = pm.environment.get(\"deletedProductId\");\r",
+									"\r",
+									"pm.test(\"Deleted item should not be found\", function () {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/{{deletedProductId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{deletedProductId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "List orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Pagination returns correct number of results\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.length).to.eql(3); // \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let expectedSchema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"number\"\r",
+									"    },\r",
+									"    \"name\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"sku\": {\r",
+									"      \"type\": \"number\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"name\",\r",
+									"    \"sku\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Response follows JSON schema\", function () {\r",
+									"    pm.response.to.have.jsonSchema(expectedSchema);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"order_id\", jsonData.id);\r",
+									"pm.environment.set(\"order_name\", jsonData.name);\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"order5\",\r\n    \"sku\": 123425445656765\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check newly created order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let orderName = pm.environment.get(\"order_name\");\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.test(\"Assert name of the order\", function () {\r",
+									"    pm.expect(jsonData.name).to.eql(orderName);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/{{order_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"{{order_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"edited_order_name\", jsonData.name);\r",
+									"\r",
+									"pm.test(\"Check edited name of the order\", function () {\r",
+									"    pm.expect(jsonData.name).to.eql(\"orderEDITED\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{order_id}},\r\n    \"name\": \"orderEDITED\",\r\n    \"sku\": 999921312423312\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove order by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.environment.set(\"deletedOrderId\", jsonData.id);\r",
+									"let orderName = pm.environment.get(\"edited_order_name\");\r",
+									"\r",
+									"pm.test(\"Assert name of the deleted product\", function () {\r",
+									"    pm.expect(jsonData.name).to.eql(orderName);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/{{order_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"{{order_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check deleted order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let itemId = pm.environment.get(\"deletedOrderId\");\r",
+									"\r",
+									"pm.test(\"Deleted item should not be found\", function () {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/{{deletedOrderId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"{{deletedOrderId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Pagination returns correct number of results\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.length).to.eql(9); // \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let expectedSchema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"number\"\r",
+									"    },\r",
+									"    \"firstName\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"lastName\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"email\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"dateOfBirth\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"emailVerified\": {\r",
+									"      \"type\": \"boolean\"\r",
+									"    },\r",
+									"    \"signUpDate\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"status\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"level\": {\r",
+									"      \"type\": \"string\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"firstName\",\r",
+									"    \"lastName\",\r",
+									"    \"email\",\r",
+									"    \"dateOfBirth\",\r",
+									"    \"emailVerified\",\r",
+									"    \"signUpDate\",\r",
+									"    \"status\",\r",
+									"    \"level\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Response follows JSON schema\", function () {\r",
+									"    pm.response.to.have.jsonSchema(expectedSchema);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"user_id\", jsonData.id);\r",
+									"pm.environment.set(\"user_email\", jsonData.email);\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Andrii\",\r\n    \"lastName\": \"Ratnik\",\r\n    \"email\": \"dream.real@gmail.com\",\r\n    \"dateOfBirth\": \"2001-10-99\",\r\n    \"emailVerified\": true,\r\n    \"signUpDate\": \"2019-08-24\",\r\n    \"status\": \"active\",\r\n    \"level\": \"lord\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get newly created user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let userEmail = pm.environment.get(\"user_email\");\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.test(\"Assert name of the order\", function () {\r",
+									"    pm.expect(jsonData.email).to.eql(userEmail);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{user_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"edited_user_email\", jsonData.email);\r",
+									"\r",
+									"pm.test(\"Check edited name of the order\", function () {\r",
+									"    pm.expect(jsonData.email).to.eql(\"ilon.mask@gmail.com\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Elon\",\r\n    \"lastName\": \"Musk\",\r\n    \"email\": \"ilon.mask@gmail.com\",\r\n    \"dateOfBirth\": \"2001-10-99\",\r\n    \"emailVerified\": true,\r\n    \"signUpDate\": \"2019-08-24\",\r\n    \"status\": \"active\",\r\n    \"level\": \"lord\",\r\n    \"id\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove user by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.environment.set(\"deletedUserId\", jsonData.id);\r",
+									"let userEmail = pm.environment.get(\"edited_user_email\");\r",
+									"\r",
+									"pm.test(\"Assert email of the deleted user\", function () {\r",
+									"    pm.expect(jsonData.email).to.eql(userEmail);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{user_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check deleted user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let itemId = pm.environment.get(\"deletedUserId\");\r",
+									"\r",
+									"pm.test(\"Deleted user should not be found\", function () {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{deletedUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{deletedUserId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "store_id",
+			"value": ""
+		},
+		{
+			"key": "product_id",
+			"value": ""
+		}
+	]
+}
